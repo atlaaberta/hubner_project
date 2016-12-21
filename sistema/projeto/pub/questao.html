@@ -1,0 +1,278 @@
+<head>
+{% load static %}
+{% get_static_prefix as STATIC_URL %}
+  <meta charset="utf-8">
+  <title>Simula</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+	<!--link rel="stylesheet/less" href="less/bootstrap.less" type="text/css" /-->
+	<!--link rel="stylesheet/less" href="less/responsive.less" type="text/css" /-->
+	<!--script src="js/less-1.3.3.min.js"></script-->
+	<!--append ‘#!watch’ to the browser URL, then refresh the page. -->
+	
+	<link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+	<link href="{{ STATIC_URL }}css/style.css" rel="stylesheet">
+	<link href="{{ STATIC_URL }}js/jquery.rating.css" rel="stylesheet">
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+  <![endif]-->
+
+  <!-- Fav and touch icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ STATIC_URL }}img/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ STATIC_URL }}img/apple-touch-icon-114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ STATIC_URL }}img/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="{{ STATIC_URL }}img/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png">
+  
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/scripts.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.rating.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jQueryValidate.js"></script>
+<style type="text/css" media="screen">
+    #editor { 
+        height:400px;
+	width:100%;
+    }
+    #editor2 { 
+        height:400px;
+	width:100%;
+    }
+</style>
+</head>
+<body>
+	<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<a href="{% url 'temas' %}"><img class="logo" src="{{ STATIC_URL }}img/logo.png" /></a>
+			<nav class="navbar navbar-default" role="navigation">
+				<ul class="nav navbar-nav">
+					<li><a href="{% url 'temas' %}"><span class="glyphicon glyphicon-home"> Home</a></li>
+				</ul>
+				<p class="navbar-text">Pode resolver sua questão!!</p>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="{% url 'forum' termo='tudo' pagina_id=1 %}">Ir para o fórum!</a></li>
+				      <li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Opções <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+					  <li><a href="{% url 'altsenha' %}">Alterar Senha</a></li>
+					  <li class="divider"></li>
+					  <li><a href="{% url 'sair' %}">Sair</a></li>
+					</ul>
+				      </li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+		{% if questao %}
+			<div id="questao">
+			<form method="POST" role="form">
+			{% csrf_token %}
+			<input type="hidden" name="titulo" value="Solução da questão: {{questao.titulo}}" />
+			<input type="hidden" name="questao" value="{{questao.id}}" />
+			<input type="hidden" name="tipo" value="1" />
+			<input type="hidden" name="codigo" id="codigofeito" value=""/>
+			<input type="hidden" name="duvida" value="0" />
+			<div class="panel panel-primary">
+  					<!-- Default panel contents -->
+  						<div class="panel-heading">{{questao.titulo}}</div>
+			
+			<div class="list-group-item">
+			<dl>
+				<dt>
+					Enunciado da questão: 
+				</dt>
+				<dd>
+					{{ questao.descricao }}
+				</dd>
+			</div>
+			<div class="list-group-item">
+				<dt>
+					Linguagem utilizará para resolver o problema:
+				</dt>
+				<dd>
+					<select class="form-control" id="linguagem" name="linguagem" onChange="mudarLinguagem();">
+						<option value="java">Java</option>
+						<option value="mode-c_cpp">C/C++</option>
+						<option value="python">Python</option>
+						<option value="javascript">Javascript</option>
+						<option value="sql">SQL</option>
+					</select>
+				</dd>
+			</dl>
+			</div>
+			<div class="list-group-item">
+				<div class="form-group">
+					 <label>Resposta:</label>
+					<div id="editor" onkeyup="mudandoValor();">
+public class Exemplo  
+{  
+    public static void main(String args[])  
+    {  
+	System.out.println("Hello, World!!!");  
+    }  
+}  
+					</div>
+				
+				
+				<dl>
+					<dt>
+						Faça alguma observação sobre seu código(Opcional): 
+					</dt>
+				</dl>
+			
+				<textarea class="form-control" rows="3" name="problema" placeholder="Utilize este campo se desejar explicar algo dentro de seu código, não utilize o campo para outros fins!"></textarea>
+				<br />
+				<label> Nos diga qual foi sua dificuldade em resolver está questão:</label>
+				<select class="form-control" name="dificuldade">
+    						<option value="0">Fácil demais</option>
+    						<option value="1">Fácil</option>
+   						<option value="2" selected="selected">Média</option>
+						<option value="3">Difícil</option>
+    						<option value="4">Muito difícil</option>
+				</select>
+				</div> 
+				</div>
+				</div>
+				<a onClick="abrirFormDuvida();" class="btn btn-danger">Não consegui, enviar minha dúvida ao Fórum!</a>
+				<button type="submit" class="btn btn-success" >Consegui, Enviar a solução final ao Fórum!</button>
+			</form>
+			</div>
+			
+		</div>
+		</div>
+		<br />
+		<div id="duvida">
+		<div class="panel panel-primary">
+  					<!-- Default panel contents -->
+  						<div class="panel-heading">Preencha os campos abaixo para enviar sua dúvida ao fórum!</div>
+			
+		
+			<form id="form" method="post">
+			{% csrf_token %}
+			<input type="hidden" name="questaod" value="{{questao.id}}" />
+			<input type="hidden" name="tipod" value="2" />
+			<input type="hidden" name="dificuldaded" value="5" />
+			<input type="hidden" name="linguagemd" id="hling" value="" />
+			<input type="hidden" name="codigod" id="codigofeitoer" value=""/>
+			<input type="hidden" name="duvida" value="1" />
+			<div class="form-group" style="margin: 0px 15px 0px 15px;">
+					<br />
+					 <label>Título</label><input maxlength="50" id="titulod" name="titulod" type="text" class="form-control">
+					<br />
+				</div>
+			<div class="list-group-item">
+				<dl>
+					<dt>
+						Detalhe a dificuldade encontrada em resolver a questão: 
+					</dt>
+				</dl>
+			
+				<textarea id="duvidad" class="form-control" rows="3" name="duvidad" placeholder="Utilize este campo para descrever sua dúvida!"></textarea>
+			</div>
+			<div class="list-group-item">
+				<dl>
+					<dt>
+						Seu código até o momento: 
+					</dt>
+				</dl>
+				<div id="editor2">
+				</div>
+			</div>
+			<br />
+				<button type="submit" class="btn btn-success" >Enviar dúvida ao fórum</button>
+			</form>
+		</div>
+		{% else %}
+    			<p>Sem questoes cadastradas</p>
+		{% endif %}
+		<div class="row clearfix">
+		<div class="col-md-12 column" id="rodape">
+			<p id=""> ©2014. Todos os direitos reservados PROGRAD - Recursos Educacionais Digitais - UTFPR CM - DACOM.</p>
+		</div>
+	
+	</div>
+</div>	
+	
+</div>
+<script src="{{ STATIC_URL }}ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<script>
+	var linguagem= "java"
+	$('#hling').val(linguagem);
+	$("#duvida").hide();
+    	var editor = ace.edit("editor");
+	var editor2 = ace.edit("editor2");
+    	editor.setTheme("ace/theme/textmate");
+	editor2.setTheme("ace/theme/textmate");
+    	editor.getSession().setMode("ace/mode/java");
+	editor2.getSession().setMode("ace/mode/java");
+	function mudarLinguagem(){
+		var ling=$('#linguagem option:selected').val();
+		linguagem = ling;
+		$('#hling').val(linguagem);
+		editor.getSession().setMode("ace/mode/"+ling);
+		editor2.getSession().setMode("ace/mode/"+ling);
+		switch(ling){
+			case 'java':
+		  		editor.setValue("public class Exemplo{\n   public static void main(String args[]){\n      System.out.println(\"Hello, World!!!\");\n   }\n}");
+		  	break;
+			case 'mode-c_cpp':
+				editor.setValue("#include <stdio.h>\nint main (int argc, char** argv){\n   printf(\"Hello World!\");\n   return (0);\n}");
+			break;
+			case 'python':
+		  		editor.setValue("print \"Hello, World!\"");
+		  	break;
+			case 'javascript':
+				editor.setValue("function myFunction(){\n   alert(\"Hello World!\");   \n}");
+			break;
+			case 'sql':
+				editor.setValue("Select * From Exemplo");
+			break;
+			default:
+		  		alert("Erro ao selecionar linguagem.");
+		}
+		$("#codigofeito").val(editor.getValue());
+	}
+	function abrirFormDuvida(){
+		editor2.setValue(editor.getValue());
+		editor2.setReadOnly(true);
+		$("#duvida").show();	
+		$('#questao').hide();
+		$('html, body').animate({
+    			scrollTop: $("#duvida").offset().top
+ 		}, 1000);
+		$("#codigofeitoer").val(editor.getValue());
+	}
+	function mudandoValor(){
+		$("#codigofeito").val(editor.getValue());
+	}
+	$(document).ready(function() {
+	$("#codigofeito").val(editor.getValue());
+	$("#form").validate({
+                rules: {
+                    titulod: {required: true, minlength: 6, maxlength: 50},
+		    duvidad: {required: true, minlength: 50, maxlength: 1000}
+                },
+                messages: {
+			titulod: {required: "De um título a sua dúvida", minlength: "Seu título tem de ter no mínimo 6 dígitos", maxlength: "Seu título deve ter no máximo 50 caracteres"},
+                    duvidad: {required: "Descreva sua dúvida", minlength: "A sua descrição deve ter no mínimo 50 dígitos", maxlength: "A sua descrição deve ter no máximo 1000 dígitos"}
+                },
+                errorPlacement: function(error, element) {
+                    error.insertAfter(element); // default function
+                },
+                submitHandler: function() {
+                    if($("#form").valid()){
+		    	$("#form").submit();
+		    }
+                }
+
+            });
+	});
+</script>
+</body>

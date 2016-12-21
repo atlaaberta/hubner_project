@@ -1,0 +1,115 @@
+<head>
+{% load static %}
+{% get_static_prefix as STATIC_URL %}
+  <meta charset="utf-8">
+  <title>Simula</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+	<!--link rel="stylesheet/less" href="less/bootstrap.less" type="text/css" /-->
+	<!--link rel="stylesheet/less" href="less/responsive.less" type="text/css" /-->
+	<!--script src="js/less-1.3.3.min.js"></script-->
+	<!--append ‘#!watch’ to the browser URL, then refresh the page. -->
+	
+	<link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
+	<link href="{{ STATIC_URL }}css/style.css" rel="stylesheet">
+
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+  <![endif]-->
+
+  <!-- Fav and touch icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ STATIC_URL }}img/apple-touch-icon-144-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ STATIC_URL }}img/apple-touch-icon-114-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ STATIC_URL }}img/apple-touch-icon-72-precomposed.png">
+  <link rel="apple-touch-icon-precomposed" href="{{ STATIC_URL }}img/apple-touch-icon-57-precomposed.png">
+  <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png">
+  
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/scripts.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jQueryValidate.js"></script>
+</head>
+<body>
+	<div class="container">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<a href="{% url 'temas' %}"><img class="logo" src="{{ STATIC_URL }}img/logo.png" /></a>
+			<nav class="navbar navbar-default" role="navigation">
+				<ul class="nav navbar-nav">
+					<li><a href="{% url 'temas' %}"><span class="glyphicon glyphicon-home"> Home</a></li>
+				</ul>
+				<p class="navbar-text">Escolha uma questão para resolver!!</p>
+				<form class="navbar-form navbar-right" role="search" method="POST">{% csrf_token %}
+				      <div class="form-group">
+					<input type="text" class="form-control" placeholder="Buscar uma questão" name="texto">
+				      </div>
+				      <button type="submit" class="btn btn-default">Pesquisar</button>
+				</form>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="{% url 'forum' termo='tudo' pagina_id=1 %}">Ir para o fórum!</a></li>
+				      <li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Opções <b class="caret"></b></a>
+					<ul class="dropdown-menu">
+					  <li><a href="{% url 'altsenha' %}">Alterar Senha</a></li>
+					  <li class="divider"></li>
+					  <li><a href="{% url 'sair' %}">Sair</a></li>
+					</ul>
+				      </li>
+				</ul>
+			</nav>
+			<div class="row clearfix">
+				<div class="col-md-4 column"></div>
+				<div class="col-md-4 column">
+					<div class="panel panel-primary">
+						 <div class="panel-heading">Preencha com sua nova senha!</div>
+						 <form method="post" id="form">
+							{% csrf_token %}
+							<div class="form-group">
+								 <label>Sua nova senha</label><input id="npass" maxlength="254" name="npass" type="password" class="form-control">
+							</div>
+							<div class="form-group">
+								 <label>Confirme sua senha</label><input id="rnpass" name="rnpass" type="password" class="form-control">
+							</div>
+
+							 <button type="submit" class="btn btn-default">Enviar nova senha</button>
+						 </form>	
+						 <a class="list-group-item active"></a>	
+					</div>
+				</div>
+				<div class="col-md-4 column"></div>
+			</div>
+		</div>
+	</div>
+	<div class="row clearfix">
+		<div class="col-md-12 column" id="rodape">
+			<p id=""> ©2014. Todos os direitos reservados PROGRAD - Recursos Educacionais Digitais - UTFPR CM - DACOM.</p>
+		</div>
+	</div>
+</div>
+<script>
+	
+$(document).ready(function() {
+	$("#form").validate({
+		rules: {
+			npass: { required: true,minlength: 8},
+			rnpass: {required: true,minlength: 8,equalTo: "#npass"}
+		},
+		messages: {
+			npass: {required: "Por favor digite uma nova senha", minlength:"Digite uma senha com no mínimo 8 caracteres!"},
+			rnpass: {required: "Por favor digite a confirmação da senha", minlength: "Digite uma senha com no mínimo 8 caracteres!", equalTo: "Sua confirmação tem de ser igual a sua senha"}
+		},
+                errorPlacement: function(error, element) {
+                    error.insertAfter(element); // default function
+                },
+                submitHandler: function() {
+                    if($("#form").valid()){
+		    	$("#form").submit();
+		    }
+                }
+	});
+});
+</script>
+</body>
